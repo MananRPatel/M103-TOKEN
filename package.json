@@ -1,0 +1,17 @@
+{
+    "name": "Manan19IT103TokenSale",
+    "version": "1.0.0",
+    "description": "Manan19IT103 Token Sale ICO",
+    "main": "truffle.js",
+    "directories": {
+        "test": "test"
+    },
+    "scripts": {
+        "dev": "lite-server"
+    },
+    "author": "Gregory",
+    "license": "ISC",
+    "dependencies": {
+        "lite-server": "^2.6.1"
+    }
+}
