@@ -1,67 +1,48 @@
-pragma solidity 0.4.2;
+// SPDX-License-Identifier: GPL-3.0
+pragma solidity 0.8.15;
 
 import "./Manan19IT103.sol";
 
 contract Manan19IT103TokenSale {
-    address admin; 
+    address admin;
     Manan19IT103 public tokenContract;
     uint256 public tokenPrice;
     uint256 public tokensSold;
 
     event Sell(address _buyer, uint256 _amount);
 
-    function Manan19IT103TokenSale(Manan19IT103 _tokenContract, uint256 _tokenPrice)
-        public
-    {
+    constructor(Manan19IT103 _tokenContract, uint256 _tokenPrice) {
         admin = msg.sender;
         tokenContract = _tokenContract;
         tokenPrice = _tokenPrice;
     }
 
-    function multiply(uint256 x, uint256 y) internal returns (uint256 z) {
-        if(y == 0 || (z = x * y) / y == x){
-        }else{
-            throw;
-        }
+    function multiply(uint256 x, uint256 y) pure internal returns (uint256 z) {
+        require(y == 0 || (z = x * y) / y == x);
     }
 
     function buyTokens(uint256 _numberOfTokens) public payable {
-        if(msg.value == multiply(_numberOfTokens, tokenPrice)){
-
-        }else{
-            throw;
-        }
-        if(tokenContract.balanceOf(this) >= _numberOfTokens){
-
-        }else{
-            throw;
-        }
-        if(tokenContract.transfer(msg.sender, _numberOfTokens)){
-
-        }else{
-            throw;
-        }
+        require(msg.value == multiply(_numberOfTokens, tokenPrice));
+        require(tokenContract.balanceOf(address(this)) >= _numberOfTokens);
+        require(tokenContract.transfer(msg.sender, _numberOfTokens));
 
         tokensSold += _numberOfTokens;
 
-        Sell(msg.sender, _numberOfTokens);
+        emit Sell(msg.sender, _numberOfTokens);
     }
 
-    function endSale() public {
-        if(msg.sender == admin){
-
-        }else{
-            throw;
-        }
-        if(tokenContract.transfer(admin, tokenContract.balanceOf(this))){
-
-        }else{
-            throw;
-        }
+    function endSale() public payable {
+        require(msg.sender == admin);
+        require(
+            tokenContract.transfer(
+                admin,
+                tokenContract.balanceOf(address(this))
+            )
+        );
 
         // UPDATE: Let's not destroy the contract here
         // Just transfer the balance to the admin
         //admin.transfer(address(this).balance);
-    selfdestruct(admin);
+        selfdestruct(payable(admin));
     }
 }
